@@ -9,10 +9,10 @@
 import Foundation
 import Combine
 
-@usableFromInline var objectBagKey = 0 as UInt8
+@usableFromInline var cancellableKey = 0 as UInt8
 
 extension NSObject {
-    final public class ObjectBag: RangeReplaceableCollection {
+    final public class Cancellables: RangeReplaceableCollection {
         public typealias Index = Array<AnyCancellable>.Index
 
         public typealias Element = Array<AnyCancellable>.Element
@@ -52,21 +52,27 @@ extension NSObject {
     }
     
     /// Set<AnyCancellable>を公開してしまうと、更新が常にO(N)になるため、Classにしてある。
-    @inlinable public var objectBag: ObjectBag {
-        @inlinable get { self.bagContainer.value }
-        @inlinable set { self.bagContainer.value = newValue }
+    @available(*, deprecated, message: "Use cancellables instead")
+    @inlinable public var objectBag: Cancellables {
+        @inlinable get { self.cancellableContainer.value }
+        @inlinable set { self.cancellableContainer.value = newValue }
     }
     
-    @usableFromInline final class BagContainer {
-        @usableFromInline var value = ObjectBag()
+    @inlinable public var cancellables: Cancellables {
+        @inlinable get { self.cancellableContainer.value }
+        @inlinable set { self.cancellableContainer.value = newValue }
+    }
+    
+    @usableFromInline final class CancellableContainer {
+        @usableFromInline var value = Cancellables()
         
         @inlinable init() {}
     }
     
-    @inlinable var bagContainer: BagContainer {
-        if let container = objc_getAssociatedObject(self, &objectBagKey) as? BagContainer { return container }
-        let container = BagContainer()
-        objc_setAssociatedObject(self, &objectBagKey, container, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+    @inlinable var cancellableContainer: CancellableContainer {
+        if let container = objc_getAssociatedObject(self, &cancellableKey) as? CancellableContainer { return container }
+        let container = CancellableContainer()
+        objc_setAssociatedObject(self, &cancellableKey, container, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         return container
     }
 }
