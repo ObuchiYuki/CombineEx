@@ -10,7 +10,7 @@ import Foundation
 import Combine
 
 extension Collection where Element: Publisher {
-    @inlinable public var combineLatest: Publishers.CombineLatestCollection<Self> {
+    @inlinable public func combineLatest() -> Publishers.CombineLatestCollection<Self> {
         Publishers.CombineLatestCollection(upstreams: self)
     }
 }
@@ -110,7 +110,7 @@ extension Publishers.CombineLatestCollection {
         
         @inlinable public func receive(subscription: Combine.Subscription) {
             self.subscription.subscriptions.append(subscription)
-            guard self.subscription.subscriptions.count == upstreamCount else { return }
+            guard self.subscription.subscriptions.count == self.upstreamCount else { return }
             self.downstream.receive(subscription: self.subscription)
         }
         
@@ -120,9 +120,10 @@ extension Publishers.CombineLatestCollection {
                 
                 return self.downstream.receive(self.valueStorage)
             } else {
+                let isNil = self.prebuildStorage[input.index] == nil
                 self.prebuildStorage[input.index] = input.value
                 
-                guard self.prebuildStorage[input.index] == nil else { return .max(1) }
+                guard isNil else { return .max(0) }
                 
                 self.valueReceivedCount += 1
                 
@@ -134,7 +135,7 @@ extension Publishers.CombineLatestCollection {
                 }
             }
             
-            return .max(1)
+            return .max(0)
         }
         
         @inlinable public func receive(completion: Subscribers.Completion<Downstream.Failure>) {

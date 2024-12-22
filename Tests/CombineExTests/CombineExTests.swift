@@ -10,6 +10,6 @@ import CombineEx
             return $0 + 1
         }
     
-    print("value1", p2.unsafeValue().value)
-    print("value2", p2.unsafeValue().value)
+    let cancellable = [p1, p2].combineLatest()
+        .sink { print("[p1, p2]", $0) }
 }
