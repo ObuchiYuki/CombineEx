@@ -1,12 +1,15 @@
-import XCTest
-@testable import CombineEx
+import Testing
+import Combine
+import CombineEx
 
-final class CombineExTests: XCTestCase {
-    func testExample() throws {
-        // XCTest Documentation
-        // https://developer.apple.com/documentation/xctest
-
-        // Defining Test Cases and Test Methods
-        // https://developer.apple.com/documentation/xctest/defining_test_cases_and_test_methods
-    }
+@Test func Combine_Test() { // ✅ グローバル関数として定義可能
+    let p1 = Just(1)
+    let p2 = p1
+        .map{
+            print("map", $0)
+            return $0 + 1
+        }
+    
+    print("value1", p2.unsafeValue().value)
+    print("value2", p2.unsafeValue().value)
 }
