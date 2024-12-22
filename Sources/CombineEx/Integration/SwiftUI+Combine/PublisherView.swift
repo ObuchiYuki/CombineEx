@@ -18,7 +18,7 @@ public struct PublisherView<Publisher: Value, Content: View>: View {
     @State
     @usableFromInline var value: Publisher.Output
     
-    init(_ publisher: Publisher, @ViewBuilder build: @escaping (Output) -> Content)
+    public init(_ publisher: Publisher, @ViewBuilder build: @escaping (Output) -> Content)
     {
         self.publisher = publisher
         self.build = build
