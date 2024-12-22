@@ -9,20 +9,20 @@
 import Combine
 
 @propertyWrapper
-public struct ObservableProperty<Value> {
+public struct ObservableProperty<Output> {
     
-    @inlinable public var projectedValue: some Publisher<Value, Never> {
+    @inlinable public var projectedValue: some Value<Output> {
         self.subject
     }
 
-    @usableFromInline let subject: CurrentValueSubject<Value, Never>
+    @usableFromInline let subject: CurrentValueSubject<Output, Never>
     
-    @inlinable public var wrappedValue: Value {
+    @inlinable public var wrappedValue: Output {
         @inlinable get { self.subject.value }
         @inlinable set { self.subject.send(newValue) }
     }
     
-    @inlinable public init(wrappedValue value: Value) {
+    @inlinable public init(wrappedValue value: Output) {
         self.subject = CurrentValueSubject(value)
     }
 }
