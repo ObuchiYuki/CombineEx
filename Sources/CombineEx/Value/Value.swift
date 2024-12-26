@@ -10,3 +10,4 @@ import Combine
 public protocol Value<Output>: Publisher where Failure == Never {
     var value: Output { get }
 }
+
